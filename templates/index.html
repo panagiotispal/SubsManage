@@ -4,15 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+    
     <title>Subscription Dashboard</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
-    <meta name="theme-color" content="#1E1E2E">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#0F172A">
 </head>
 <body>
     <div class="app-container">
@@ -46,16 +50,16 @@
 
         <main class="main-content">
             
-            <div class="d-flex justify-content-between align-items-center mb-5">
+            <div class="d-flex justify-content-between align-items-center mb-4">
                 
                 {% if session.user_id %}
                     <div class="d-flex align-items-center">
-                        <img src="{{ url_for('static', filename='uploads/' + profile_pic) }}" 
+                        <img src="{{ url_for('static', filename='uploads/' + profile_pic) }}?v={{ range(1, 10000) | random }}" 
                              class="profile-img-small me-3"
-                             style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #7F56D9;"
+                             style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #a881fc;"
                              onerror="this.src='{{ url_for('static', filename='uploads/default.png') }}'">
                         <div>
-                            <h1 class="mb-1">Γεια σου, {{ username }}!</h1>
+                            <h1 class="mb-1" style="font-size: 1.8rem;">Γεια σου, {{ username }}!</h1>
                             <p class="text-muted mb-0">Οικονομική Επισκόπηση</p>
                         </div>
                     </div>
@@ -78,7 +82,6 @@
                             <p class="text-muted mb-0">Συνδέσου για να δεις τα δεδομένα σου.</p>
                         </div>
                     </div>
-                    
                     <div>
                         <a href="{{ url_for('login') }}" class="btn btn-outline-light me-2 px-4">
                             Σύνδεση
@@ -90,50 +93,79 @@
                 {% endif %}
             </div>
 
+            {% if session.user_id and user_budget > 0 %}
             <div class="row mb-4">
-                <div class="col-md-6 col-lg-3">
-                    <div class="main-card p-3 d-flex align-items-center mb-3 h-100">
+                <div class="col-12">
+                    <div class="main-card p-4" style="min-height: auto;">
+                        <div class="d-flex justify-content-between align-items-end mb-2">
+                            <div>
+                                <h5 class="mb-0"><i class="fas fa-bullseye me-2 text-primary"></i> Μηνιαίος Στόχος</h5>
+                                <small class="text-muted">Έχεις ξοδέψει <strong>{{ total_monthly }}€</strong> από <strong>{{ user_budget }}€</strong></small>
+                            </div>
+                            <span class="fw-bold fs-5 text-{{ budget_status }}">{{ budget_percent }}%</span>
+                        </div>
+                        
+                        <div class="progress" style="height: 12px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                            <div class="progress-bar bg-{{ budget_status }} progress-bar-striped progress-bar-animated" 
+                                 role="progressbar" 
+                                 style="width: {{ display_percent }}%; border-radius: 10px;">
+                            </div>
+                        </div>
+
+                        {% if budget_percent > 100 %}
+                            <div class="mt-2 text-danger small">
+                                <i class="fas fa-exclamation-triangle"></i> Προσοχή! Έχεις ξεπεράσει τον προϋπολογισμό σου κατά {{ (total_monthly - user_budget)|round(2) }}€
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="row mb-4">
+                <div class="col-md-6 col-lg-3 mb-3">
+                    <div class="main-card p-3 d-flex align-items-center h-100">
                         <div class="bg-primary bg-opacity-25 p-3 rounded-circle me-3">
                             <i class="fas fa-wallet fa-2x text-primary"></i>
                         </div>
                         <div>
-                            <p class="text-muted mb-0 text-uppercase fw-bold" style="font-size: 0.75rem;">Μηνιαίο Κόστος</p>
+                            <p class="text-muted mb-0 text-uppercase fw-bold" style="font-size: 0.7rem;">Μηνιαίο Κόστος</p>
                             <h4 class="mb-0 fw-bold">{{ total_monthly }} €</h4>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-md-6 col-lg-3">
-                    <div class="main-card p-3 d-flex align-items-center mb-3 h-100">
+                <div class="col-md-6 col-lg-3 mb-3">
+                    <div class="main-card p-3 d-flex align-items-center h-100">
                         <div class="bg-success bg-opacity-25 p-3 rounded-circle me-3">
                             <i class="fas fa-piggy-bank fa-2x text-success"></i>
                         </div>
                         <div>
-                            <p class="text-muted mb-0 text-uppercase fw-bold" style="font-size: 0.75rem;">Ετήσια Πρόβλεψη</p>
+                            <p class="text-muted mb-0 text-uppercase fw-bold" style="font-size: 0.7rem;">Ετήσια Πρόβλεψη</p>
                             <h4 class="mb-0 fw-bold">{{ total_yearly }} €</h4>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-md-6 col-lg-3">
-                    <div class="main-card p-3 d-flex align-items-center mb-3 h-100">
+                <div class="col-md-6 col-lg-3 mb-3">
+                    <div class="main-card p-3 d-flex align-items-center h-100">
                         <div class="bg-danger bg-opacity-25 p-3 rounded-circle me-3">
                             <i class="fas fa-fire fa-2x text-danger"></i>
                         </div>
                         <div>
-                            <p class="text-muted mb-0 text-uppercase fw-bold" style="font-size: 0.75rem;">Έχεις Ξοδέψει</p>
+                            <p class="text-muted mb-0 text-uppercase fw-bold" style="font-size: 0.7rem;">Έχεις Ξοδέψει</p>
                             <h4 class="mb-0 fw-bold">{{ total_spent }} €</h4>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-md-6 col-lg-3">
-                    <div class="main-card p-3 d-flex align-items-center mb-3 h-100">
+                <div class="col-md-6 col-lg-3 mb-3">
+                    <div class="main-card p-3 d-flex align-items-center h-100">
                         <div class="bg-warning bg-opacity-25 p-3 rounded-circle me-3">
                             <i class="fas fa-layer-group fa-2x text-warning"></i>
                         </div>
                         <div>
-                            <p class="text-muted mb-0 text-uppercase fw-bold" style="font-size: 0.75rem;">Συνδρομές</p>
+                            <p class="text-muted mb-0 text-uppercase fw-bold" style="font-size: 0.7rem;">Συνδρομές</p>
                             <h4 class="mb-0 fw-bold">{{ count }}</h4>
                         </div>
                     </div>
@@ -142,16 +174,16 @@
 
             <div class="row">
                 
-                <div class="col-lg-8">
+                <div class="col-lg-8 mb-4">
                     <div class="main-card">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h3 class="mb-0">📋 Οι Συνδρομές μου</h3>
-                            <input type="text" id="searchInput" class="form-control w-25" placeholder="🔍 Αναζήτηση...">
+                        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                            <h3 class="mb-0"><i class="fas fa-clipboard-list me-2"></i> Οι Συνδρομές μου</h3>
+                            <input type="text" id="searchInput" class="form-control" style="width: 250px;" placeholder="🔍 Αναζήτηση...">
                         </div>
                         
                         {% if subscriptions %}
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle" id="subsTable">
+                            <table class="table align-middle" id="subsTable">
                                 <thead>
                                     <tr>
                                         <th>Υπηρεσία</th>
@@ -168,7 +200,7 @@
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <img src="{{ sub.logo }}" class="subscription-logo me-3">
-                                                <span class="fw-bold fs-5">{{ sub.name }}</span>
+                                                <span class="fs-6 fw-bold text-white">{{ sub.name }}</span>
                                             </div>
                                         </td>
                                         
@@ -181,13 +213,13 @@
                                         <td class="fw-bold text-primary">{{ sub.price }} €</td>
                                         
                                         <td>
-                                            <span class="badge bg-dark bg-opacity-50 text-white border border-secondary">
+                                            <span class="badge bg-dark">
                                                 {{ sub.billing_cycle }}
                                             </span>
                                         </td>
                                         
-                                        <td class="text-warning fw-bold">
-                                            <small><i class="far fa-clock me-1"></i> {{ sub.next_billing }}</small>
+                                        <td class="text-warning fw-bold" style="font-size: 0.9rem;">
+                                            <i class="far fa-clock me-1"></i> {{ sub.next_billing }}
                                         </td>
                                         
                                         <td>
@@ -213,20 +245,26 @@
                             <div class="text-center py-5 text-muted">
                                 <i class="fas fa-inbox fa-3x mb-3 opacity-50"></i>
                                 <h4>Δεν υπάρχουν συνδρομές.</h4>
-                                <p>Πάτα "Νέα Συνδρομή" για να ξεκινήσεις.</p>
+                                {% if session.user_id %}
+                                    <p>Πάτα "Νέα Συνδρομή" για να ξεκινήσεις.</p>
+                                {% else %}
+                                    <p>Συνδέσου για να προσθέσεις τις δικές σου.</p>
+                                {% endif %}
                             </div>
                         {% endif %}
                     </div>
                 </div>
 
-                <div class="col-lg-4">
+                <div class="col-lg-4 mb-4">
                     <div class="main-card h-100">
                         <h5 class="mb-4">📊 Έξοδα ανά Κατηγορία</h5>
                         
                         {% if subscriptions %}
-                            <canvas id="expensesChart" style="max-height: 300px;"></canvas>
+                            <div style="height: 300px; position: relative;">
+                                <canvas id="expensesChart"></canvas>
+                            </div>
                         {% else %}
-                            <p class="text-muted text-center mt-5">Πρόσθεσε δεδομένα για να δεις το γράφημα.</p>
+                            <p class="text-muted text-center mt-5">Δεν υπάρχουν δεδομένα.</p>
                         {% endif %}
                     </div>
                 </div>
@@ -242,7 +280,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // --- 1. SEARCH FUNCTIONALITY (Φιλτράρισμα Πίνακα) ---
+        // --- 1. SEARCH FUNCTIONALITY ---
         document.getElementById('searchInput').addEventListener('keyup', function() {
             let searchValue = this.value.toLowerCase();
             let tableRows = document.querySelectorAll('#subsTable tbody tr');
@@ -253,7 +291,7 @@
             });
         });
 
-        // --- 2. CHART JS (Γράφημα ανά Κατηγορία) ---
+        // --- 2. CHART JS ---
         {% if category_totals %}
             const labels = [{% for cat in category_totals.keys() %}"{{ cat }}",{% endfor %}];
             const data = [{% for val in category_totals.values() %}{{ val }},{% endfor %}];
@@ -266,15 +304,15 @@
                     datasets: [{
                         data: data,
                         backgroundColor: [
-                            '#FF6384', // Κόκκινο (Entertainment)
-                            '#36A2EB', // Μπλε (Work)
-                            '#FFCE56', // Κίτρινο (Utilities)
-                            '#4BC0C0', // Τυρκουάζ (Health)
-                            '#9966FF', // Μωβ (Education)
-                            '#C9CBCF'  // Γκρι (Other)
+                            '#ff6384', // Entertainment (Red/Pink)
+                            '#36a2eb', // Work (Blue)
+                            '#ffce56', // Utilities (Yellow)
+                            '#4bc0c0', // Health (Teal)
+                            '#9966ff', // Education (Purple)
+                            '#c9cbcf'  // Other (Grey)
                         ],
                         borderWidth: 0,
-                        hoverOffset: 10
+                        hoverOffset: 15
                     }]
                 },
                 options: {
@@ -283,8 +321,11 @@
                     plugins: {
                         legend: {
                             position: 'bottom',
-                            labels: { color: '#A0A0C0', padding: 20 }
+                            labels: { color: '#a0a0c0', padding: 20, usePointStyle: true }
                         }
+                    },
+                    layout: {
+                        padding: 10
                     }
                 }
             });
