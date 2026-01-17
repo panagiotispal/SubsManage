@@ -1,6 +1,6 @@
 # ⚡ SubsManage - Ultimate Subscription Tracker
 
-Το **SubsManage** είναι μια ολοκληρωμένη **Full-Stack Web Εφαρμογή** για την οργάνωση, παρακολούθηση και διαχείριση συνδρομητικών υπηρεσιών (SaaS, Streaming, Utilities, Gym κ.λπ.).
+Το **SubsManage** είναι μια ολοκληρωμένη **Full-Stack Web Εφαρμογή** για την οργάνωση, παρακολούθηση και διαχείριση συνδρομητικών υπηρεσιών (Streaming, Utilities, Gym κ.λπ.).
 
 Σκοπός της εφαρμογής είναι να δώσει στον χρήστη τον πλήρη έλεγχο των οικονομικών του, προσφέροντας εργαλεία προϋπολογισμού (Budgeting), αναλυτικά στατιστικά και έξυπνες ειδοποιήσεις, μέσα από ένα μοντέρνο και φιλικό περιβάλλον χρήστη (UI).
 <img width="1699" height="785" alt="Screenshot_23" src="https://github.com/user-attachments/assets/ba62566a-ce23-4224-a3ea-f88230a62f34" />
