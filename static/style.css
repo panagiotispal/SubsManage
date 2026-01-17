@@ -333,3 +333,41 @@ input::placeholder { color: #64748b !important; }
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
+
+/* --- FIX ΓΙΑ ΤΟ CHECKBOX (LOGIN) --- */
+
+/* Το ίδιο το κουτάκι */
+.form-check-input {
+    background-color: rgba(255, 255, 255, 0.1) !important; /* Λίγο πιο ανοιχτό για να φαίνεται */
+    border: 2px solid rgba(255, 255, 255, 0.4) !important; /* Έντονο περίγραμμα */
+    width: 1.3em;
+    height: 1.3em;
+    margin-top: 0;
+    cursor: pointer;
+    /* Ακυρώνουμε το γενικό glass effect που χαλούσε το τικ */
+    backdrop-filter: none !important; 
+}
+
+/* Όταν το πατάς (Checked) */
+.form-check-input:checked {
+    background-color: var(--primary) !important; /* Μωβ χρώμα */
+    border-color: var(--primary) !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e") !important;
+}
+
+/* Το κείμενο "Να με θυμάσαι" */
+.form-check-label {
+    color: #e0e0e0 !important; /* Ανοιχτό γκρι για να διαβάζεται */
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    vertical-align: middle;
+}
+
+/* Για να κεντραριστεί με το κουτάκι */
+.form-check {
+    display: flex;
+    align-items: center;
+    padding-left: 0; /* Ακύρωση default padding του bootstrap */
+    margin-top: 10px;
+}
