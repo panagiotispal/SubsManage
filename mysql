@@ -1,0 +1,43 @@
+-- 1. Δημιουργούμε τη βάση από την αρχή
+CREATE DATABASE subscription_tracker;
+USE subscription_tracker;
+
+-- 2. Δημιουργούμε τον πίνακα των Χρηστών (διορθωμένο το username)
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 3. Δημιουργούμε τον πίνακα των Συνδρομών (με το user_id έτοιμο)
+CREATE TABLE subscriptions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    currency VARCHAR(10) DEFAULT 'EUR',
+    billing_cycle VARCHAR(20),
+    start_date DATE,
+    category VARCHAR(50),
+    user_id INT NOT NULL, -- Εδώ είναι η σύνδεση με τον χρήστη
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- 4. Δημιουργούμε έναν δοκιμαστικό χρήστη (για να δουλέψει το Python app)
+INSERT INTO users (username, email, password) 
+VALUES ('test_user', 'test@test.com', '12345');
+
+-- 5. Βάζουμε και μια δοκιμαστική συνδρομή στον χρήστη
+INSERT INTO subscriptions (name, price, billing_cycle, start_date, user_id)
+VALUES ('Netflix', 13.99, 'Monthly', '2024-01-01', 1);
+
+INSERT INTO users (username, email, password) VALUES ('test_user', 'test@test.com', '12345');
+
+USE subscription_tracker;
+
+ALTER TABLE users 
+ADD COLUMN profile_pic VARCHAR(150) DEFAULT 'default.png';
+
+ALTER TABLE subscriptions 
+ADD COLUMN category VARCHAR(50) DEFAULT 'Other';
