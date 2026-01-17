@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Νέα Συνδρομή</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <nav class="sidebar">
+            <div class="sidebar-brand"><i class="fas fa-bolt text-primary me-2"></i> SubsManage</div>
+            <div class="sidebar-menu">
+                <a href="{{ url_for('home') }}"><i class="fas fa-home me-3"></i> Αρχική</a>
+                <a href="{{ url_for('add_subscription') }}" class="active"><i class="fas fa-plus-circle me-3"></i> Προσθήκη</a>
+                <a href="{{ url_for('profile') }}"><i class="fas fa-user-cog me-3"></i> Προφίλ</a>
+                <a href="{{ url_for('logout') }}" class="mt-5 text-danger"><i class="fas fa-sign-out-alt me-3"></i> Αποσύνδεση</a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <a href="{{ url_for('home') }}" class="text-decoration-none text-muted mb-4 d-inline-block">
+                <i class="fas fa-arrow-left me-2"></i> Επιστροφή
+            </a>
+            <div class="row">
+                <div class="col-md-8 col-lg-6">
+                    <div class="main-card">
+                        <h2 class="mb-4">✨ Νέα Συνδρομή</h2>
+                        <form method="POST" action="/add">
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Κατηγορία</label>
+                                <select name="category" id="categorySelect" class="form-select" onchange="updateServices()">
+                                    <option value="" disabled selected>Επίλεξε κατηγορία...</option>
+                                    <option value="Entertainment">🎬 Διασκέδαση</option>
+                                    <option value="Work">💼 Εργασία & Tools</option>
+                                    <option value="Utilities">🏠 Σπίτι & Λογαριασμοί</option>
+                                    <option value="Health">💪 Υγεία & Γυμναστική</option>
+                                    <option value="Education">🎓 Εκπαίδευση</option>
+                                    <option value="Other">📦 Άλλο</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">Υπηρεσία</label>
+                                <input type="text" name="name" id="serviceInput" class="form-control" list="serviceOptions" 
+                                       placeholder="Επίλεξε ή γράψε..." required onchange="checkPackages()">
+                                <datalist id="serviceOptions"></datalist>
+                            </div>
+
+                            <div class="mb-4" id="packageContainer" style="display: none;">
+                                <label class="form-label text-warning"><i class="fas fa-tags me-1"></i> Διαθέσιμα Πακέτα</label>
+                                <select id="packageSelect" class="form-select" onchange="applyPackagePrice()">
+                                    <option value="" selected>Επίλεξε πακέτο (Προαιρετικό)</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label">Τιμή (€)</label>
+                                <input type="number" step="0.01" name="price" id="priceInput" class="form-control" placeholder="10.99" required>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label">Κύκλος</label>
+                                    <select name="billing_cycle" class="form-select">
+                                        <option value="Monthly">Μηνιαία</option>
+                                        <option value="Yearly">Ετήσια</option>
+                                        <option value="Weekly">Εβδομαδιαία</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label">Ημ. Έναρξης</label>
+                                    <input type="date" name="start_date" class="form-control" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Αποθήκευση</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Λίστα υπηρεσιών ανά κατηγορία
+        const servicesData = {
+            'Entertainment': ['Netflix', 'Spotify', 'Disney+', 'YouTube Premium', 'Apple Music', 'Hulu', 'PlayStation Plus'],
+            'Work': ['ChatGPT Plus', 'GitHub Copilot', 'LinkedIn Premium', 'Slack', 'Zoom', 'Adobe Creative Cloud', 'Microsoft 365'],
+            'Utilities': ['Vodafone', 'Cosmote', 'Nova', 'ΔΕΗ', 'Internet'],
+            'Health': ['Gym', 'MyFitnessPal', 'Headspace'],
+            'Education': ['Udemy', 'Coursera', 'Duolingo'],
+            'Other': ['Amazon Prime', 'Skroutz Plus']
+        };
+
+        // ΤΙΜΟΚΑΤΑΛΟΓΟΣ (Εδώ προσθέτεις τα πακέτα)
+        const pricingPackages = {
+            'Netflix': [
+                { name: 'Basic (SD)', price: 7.99 },
+                { name: 'Standard (FHD)', price: 10.99 },
+                { name: 'Premium (4K)', price: 13.99 }
+            ],
+            'Spotify': [
+                { name: 'Individual', price: 7.99 },
+                { name: 'Duo', price: 10.49 },
+                { name: 'Family', price: 12.99 },
+                { name: 'Student', price: 4.49 }
+            ],
+            'YouTube Premium': [
+                { name: 'Individual', price: 8.49 },
+                { name: 'Family', price: 12.99 },
+                { name: 'Student', price: 4.99 }
+            ],
+            'Disney+': [
+                { name: 'Monthly', price: 10.99 },
+                { name: 'Yearly', price: 109.90 } // Προσοχή: Εδώ θα πρέπει να αλλάζει και ο Κύκλος (Advanced)
+            ],
+            'Apple Music': [
+                { name: 'Individual', price: 7.49 },
+                { name: 'Family', price: 11.49 }
+            ],
+            'PlayStation Plus': [
+                { name: 'Essential', price: 8.99 },
+                { name: 'Extra', price: 13.99 },
+                { name: 'Premium', price: 16.99 }
+            ],
+            'ChatGPT Plus': [
+                { name: 'Plus Subscription', price: 22.00 } // Περίπου με φόρους
+            ]
+        };
+
+        function updateServices() {
+            const categorySelect = document.getElementById('categorySelect');
+            const dataList = document.getElementById('serviceOptions');
+            const selectedCategory = categorySelect.value;
+            
+            dataList.innerHTML = '';
+            if (servicesData[selectedCategory]) {
+                servicesData[selectedCategory].forEach(service => {
+                    const option = document.createElement('option');
+                    option.value = service;
+                    dataList.appendChild(option);
+                });
+            }
+        }
+
+        // Ελέγχει αν η υπηρεσία που έγραψε ο χρήστης έχει πακέτα
+        function checkPackages() {
+            const serviceName = document.getElementById('serviceInput').value;
+            const packageContainer = document.getElementById('packageContainer');
+            const packageSelect = document.getElementById('packageSelect');
+            
+            // Καθαρισμός προηγούμενων
+            packageSelect.innerHTML = '<option value="" selected>Επίλεξε πακέτο (Προαιρετικό)</option>';
+            
+            // Ψάχνουμε αν υπάρχει το όνομα στον τιμοκατάλογο (αγνοώντας πεζά/κεφαλαία)
+            // Βρίσκουμε το σωστό κλειδί (π.χ. αν γράψει "netflix" να βρει το "Netflix")
+            const foundKey = Object.keys(pricingPackages).find(key => key.toLowerCase() === serviceName.toLowerCase());
+
+            if (foundKey) {
+                // Εμφάνιση του κουτιού
+                packageContainer.style.display = 'block';
+                
+                // Γέμισμα με επιλογές
+                pricingPackages[foundKey].forEach(pkg => {
+                    const option = document.createElement('option');
+                    option.value = pkg.price; // Η τιμή μπαίνει στο value
+                    option.text = `${pkg.name} - ${pkg.price}€`;
+                    packageSelect.appendChild(option);
+                });
+            } else {
+                // Απόκρυψη αν δεν βρεθεί
+                packageContainer.style.display = 'none';
+            }
+        }
+
+        // Όταν διαλέξει πακέτο, ενημερώνει την τιμή
+        function applyPackagePrice() {
+            const packageSelect = document.getElementById('packageSelect');
+            const priceInput = document.getElementById('priceInput');
+            
+            if (packageSelect.value) {
+                priceInput.value = packageSelect.value;
+            }
+        }
+    </script>
+</body>
+</html>

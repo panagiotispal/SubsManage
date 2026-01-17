@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+    <title>Subscription Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <meta name="theme-color" content="#1E1E2E">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        
+        <nav class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-bolt text-primary me-2"></i> SubsManage
+            </div>
+            <div class="sidebar-menu">
+                <a href="{{ url_for('home') }}" class="active">
+                    <i class="fas fa-home me-3"></i> Αρχική
+                </a>
+                
+                {% if session.user_id %}
+                    <a href="{{ url_for('add_subscription') }}">
+                        <i class="fas fa-plus-circle me-3"></i> Προσθήκη
+                    </a>
+                    <a href="{{ url_for('profile') }}">
+                        <i class="fas fa-user-cog me-3"></i> Προφίλ
+                    </a>
+                    <a href="{{ url_for('logout') }}" class="mt-5 text-danger">
+                        <i class="fas fa-sign-out-alt me-3"></i> Αποσύνδεση
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="mt-5 text-primary">
+                        <i class="fas fa-sign-in-alt me-3"></i> Σύνδεση
+                    </a>
+                {% endif %}
+            </div>
+        </nav>
+
+        <main class="main-content">
+            
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                
+                {% if session.user_id %}
+                    <div class="d-flex align-items-center">
+                        <img src="{{ url_for('static', filename='uploads/' + profile_pic) }}" 
+                             class="profile-img-small me-3"
+                             style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #7F56D9;"
+                             onerror="this.src='{{ url_for('static', filename='uploads/default.png') }}'">
+                        <div>
+                            <h1 class="mb-1">Γεια σου, {{ username }}!</h1>
+                            <p class="text-muted mb-0">Οικονομική Επισκόπηση</p>
+                        </div>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('export_data') }}" class="btn btn-outline-light me-2">
+                            <i class="fas fa-download me-2"></i> Export
+                        </a>
+                        <a href="{{ url_for('add_subscription') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i> Νέα
+                        </a>
+                    </div>
+
+                {% else %}
+                    <div class="d-flex align-items-center">
+                        <div class="bg-dark p-3 rounded-circle me-3 border border-secondary">
+                            <i class="fas fa-user-secret fa-2x text-muted"></i>
+                        </div>
+                        <div>
+                            <h1 class="mb-1">Καλώς ήρθες!</h1>
+                            <p class="text-muted mb-0">Συνδέσου για να δεις τα δεδομένα σου.</p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-light me-2 px-4">
+                            Σύνδεση
+                        </a>
+                        <a href="{{ url_for('register') }}" class="btn btn-primary px-4">
+                            Εγγραφή
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="main-card p-3 d-flex align-items-center mb-3 h-100">
+                        <div class="bg-primary bg-opacity-25 p-3 rounded-circle me-3">
+                            <i class="fas fa-wallet fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <p class="text-muted mb-0 text-uppercase fw-bold" style="font-size: 0.75rem;">Μηνιαίο Κόστος</p>
+                            <h4 class="mb-0 fw-bold">{{ total_monthly }} €</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="main-card p-3 d-flex align-items-center mb-3 h-100">
+                        <div class="bg-success bg-opacity-25 p-3 rounded-circle me-3">
+                            <i class="fas fa-piggy-bank fa-2x text-success"></i>
+                        </div>
+                        <div>
+                            <p class="text-muted mb-0 text-uppercase fw-bold" style="font-size: 0.75rem;">Ετήσια Πρόβλεψη</p>
+                            <h4 class="mb-0 fw-bold">{{ total_yearly }} €</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="main-card p-3 d-flex align-items-center mb-3 h-100">
+                        <div class="bg-danger bg-opacity-25 p-3 rounded-circle me-3">
+                            <i class="fas fa-fire fa-2x text-danger"></i>
+                        </div>
+                        <div>
+                            <p class="text-muted mb-0 text-uppercase fw-bold" style="font-size: 0.75rem;">Έχεις Ξοδέψει</p>
+                            <h4 class="mb-0 fw-bold">{{ total_spent }} €</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="main-card p-3 d-flex align-items-center mb-3 h-100">
+                        <div class="bg-warning bg-opacity-25 p-3 rounded-circle me-3">
+                            <i class="fas fa-layer-group fa-2x text-warning"></i>
+                        </div>
+                        <div>
+                            <p class="text-muted mb-0 text-uppercase fw-bold" style="font-size: 0.75rem;">Συνδρομές</p>
+                            <h4 class="mb-0 fw-bold">{{ count }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                
+                <div class="col-lg-8">
+                    <div class="main-card">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="mb-0">📋 Οι Συνδρομές μου</h3>
+                            <input type="text" id="searchInput" class="form-control w-25" placeholder="🔍 Αναζήτηση...">
+                        </div>
+                        
+                        {% if subscriptions %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle" id="subsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Υπηρεσία</th>
+                                        <th>Κατηγορία</th>
+                                        <th>Τιμή</th>
+                                        <th>Κύκλος</th>
+                                        <th>Επόμενη Χρέωση</th>
+                                        <th>Ενέργειες</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for sub in subscriptions %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="{{ sub.logo }}" class="subscription-logo me-3">
+                                                <span class="fw-bold fs-5">{{ sub.name }}</span>
+                                            </div>
+                                        </td>
+                                        
+                                        <td>
+                                            <span class="badge badge-category category-{{ sub.category }}">
+                                                {{ sub.category }}
+                                            </span>
+                                        </td>
+                                        
+                                        <td class="fw-bold text-primary">{{ sub.price }} €</td>
+                                        
+                                        <td>
+                                            <span class="badge bg-dark bg-opacity-50 text-white border border-secondary">
+                                                {{ sub.billing_cycle }}
+                                            </span>
+                                        </td>
+                                        
+                                        <td class="text-warning fw-bold">
+                                            <small><i class="far fa-clock me-1"></i> {{ sub.next_billing }}</small>
+                                        </td>
+                                        
+                                        <td>
+                                            <a href="{{ url_for('edit_subscription', id=sub.id) }}" 
+                                               class="btn btn-outline-warning btn-sm me-2" 
+                                               title="Επεξεργασία">
+                                                <i class="fas fa-pencil-alt"></i>
+                                            </a>
+
+                                            <a href="{{ url_for('delete_subscription', id=sub.id) }}" 
+                                               class="btn btn-outline-danger btn-sm"
+                                               onclick="return confirm('Σίγουρα θέλεις να το διαγράψεις;')"
+                                               title="Διαγραφή">
+                                               <i class="fas fa-trash-alt"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                            <div class="text-center py-5 text-muted">
+                                <i class="fas fa-inbox fa-3x mb-3 opacity-50"></i>
+                                <h4>Δεν υπάρχουν συνδρομές.</h4>
+                                <p>Πάτα "Νέα Συνδρομή" για να ξεκινήσεις.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="main-card h-100">
+                        <h5 class="mb-4">📊 Έξοδα ανά Κατηγορία</h5>
+                        
+                        {% if subscriptions %}
+                            <canvas id="expensesChart" style="max-height: 300px;"></canvas>
+                        {% else %}
+                            <p class="text-muted text-center mt-5">Πρόσθεσε δεδομένα για να δεις το γράφημα.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <footer class="mt-5 text-center text-muted small">
+                <p>© 2026 SubsManage | Made with ❤️ & Python</p>
+            </footer>
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // --- 1. SEARCH FUNCTIONALITY (Φιλτράρισμα Πίνακα) ---
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            let searchValue = this.value.toLowerCase();
+            let tableRows = document.querySelectorAll('#subsTable tbody tr');
+            
+            tableRows.forEach(row => {
+                let text = row.innerText.toLowerCase();
+                row.style.display = text.includes(searchValue) ? '' : 'none';
+            });
+        });
+
+        // --- 2. CHART JS (Γράφημα ανά Κατηγορία) ---
+        {% if category_totals %}
+            const labels = [{% for cat in category_totals.keys() %}"{{ cat }}",{% endfor %}];
+            const data = [{% for val in category_totals.values() %}{{ val }},{% endfor %}];
+
+            const ctx = document.getElementById('expensesChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut', 
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            '#FF6384', // Κόκκινο (Entertainment)
+                            '#36A2EB', // Μπλε (Work)
+                            '#FFCE56', // Κίτρινο (Utilities)
+                            '#4BC0C0', // Τυρκουάζ (Health)
+                            '#9966FF', // Μωβ (Education)
+                            '#C9CBCF'  // Γκρι (Other)
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#A0A0C0', padding: 20 }
+                        }
+                    }
+                }
+            });
+        {% endif %}
+    </script>
+</body>
+</html>

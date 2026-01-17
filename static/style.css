@@ -1,0 +1,335 @@
+/* --- 1. ΒΑΣΙΚΕΣ ΡΥΘΜΙΣΕΙΣ & BACKGROUND --- */
+:root {
+    --primary: #a881fc;
+    --secondary: #2D2D44;
+    --dark-bg: #0F172A;
+    --glass: rgba(40, 40, 65, 0.4); 
+    --border: rgba(255, 255, 255, 0.2);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(-45deg, #020205, #121225, #0f172a, #1b1b38);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color: #e0e0e0;
+    min-height: 100vh;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* --- 2. ΔΙΟΡΘΩΣΗ ΧΡΩΜΑΤΩΝ ΚΕΙΜΕΝΟΥ --- */
+.text-muted { color: #94a3b8 !important; }
+/* Το Price θα είναι φωτεινό μωβ */
+.text-primary { color: #d8b4fe !important; text-shadow: 0 0 10px rgba(168, 85, 247, 0.4); } 
+.text-success { color: #4ade80 !important; }
+.text-danger { color: #f87171 !important; }
+.text-warning { color: #facc15 !important; }
+h1, h2, h3, h4, h5, h6 { color: #fff !important; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+
+/* --- 3. LOGOS --- */
+.subscription-logo {
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    border-radius: 12px;
+    object-fit: contain;
+    background-color: #fff;
+    padding: 4px;
+    border: 2px solid rgba(255,255,255,0.1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* --- 4. LAYOUT & SIDEBAR --- */
+.app-container { display: flex; min-height: 100vh; }
+
+.sidebar {
+    width: 260px;
+    background: rgba(15, 15, 30, 0.6);
+    backdrop-filter: blur(25px) saturate(180%);
+    border-right: 1px solid var(--border);
+    box-shadow: inset -5px 0 20px rgba(255,255,255,0.05);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    z-index: 100;
+}
+
+.sidebar-brand {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 3rem;
+    display: flex;
+    align-items: center;
+    text-shadow: 0 0 15px rgba(168, 129, 252, 0.6);
+}
+
+.sidebar-menu a {
+    color: #b0b0c0;
+    text-decoration: none;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+    border: 1px solid transparent;
+}
+
+.sidebar-menu a:hover, .sidebar-menu a.active {
+    background: rgba(168, 129, 252, 0.2);
+    color: #fff;
+    border: 1px solid rgba(168, 129, 252, 0.4);
+    box-shadow: 0 0 20px rgba(168, 129, 252, 0.2), inset 0 0 10px rgba(168, 129, 252, 0.1);
+    transform: translateX(5px);
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 260px;
+    padding: 2rem;
+    width: 100%;
+}
+
+/* --- 5. CARDS --- */
+.main-card {
+    background: var(--glass);
+    backdrop-filter: blur(30px) saturate(150%);
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(255,255,255,0.05);
+    border-radius: 24px;
+    padding: 25px;
+    height: 100%;
+    color: white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.main-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.3);
+}
+
+/* --- 6. ΠΙΝΑΚΑΣ (TABLE) - ΕΔΩ Η ΑΛΛΑΓΗ ΓΙΑ ΤΑ ΓΡΑΜΜΑΤΑ --- */
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-accent-bg: transparent;
+    --bs-table-hover-bg: rgba(255, 255, 255, 0.05);
+    color: #e0e0e0;
+    margin-top: 15px;
+    background-color: transparent !important;
+}
+
+.table thead th {
+    background: transparent;
+    color: #94a3b8;
+    border-bottom: 2px solid var(--border);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding-bottom: 15px;
+}
+
+.table tbody tr {
+    background-color: transparent !important;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    transition: all 0.3s ease;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(5px);
+    box-shadow: inset 0 0 15px rgba(255,255,255,0.05);
+}
+
+.table td { vertical-align: middle; border: none; padding: 20px 10px; }
+
+/* === Η ΛΥΣΗ ΓΙΑ ΤΑ ΜΑΥΡΑ ΓΡΑΜΜΑΤΑ === */
+/* Στοχεύουμε συγκεκριμένα τα έντονα γράμματα (Ονόματα Εταιριών) */
+.table td .fw-bold {
+    color: #ffffff !important; /* ΚΑΤΑΣΠΡΟ ΧΡΩΜΑ */
+    font-weight: 700 !important;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.2); /* Ελαφριά λάμψη */
+}
+
+
+/* --- 7. BADGES ΚΑΤΗΓΟΡΙΩΝ --- */
+.badge-category {
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    border: 1px solid transparent;
+    text-transform: capitalize;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    letter-spacing: 0.5px;
+}
+
+.category-Entertainment { 
+    background: rgba(255, 99, 132, 0.2); color: #ff8fa3; border-color: rgba(255, 99, 132, 0.5); 
+    box-shadow: 0 0 15px rgba(255, 99, 132, 0.3);
+}
+.category-Work { 
+    background: rgba(59, 130, 246, 0.2); color: #90cbf9; border-color: rgba(59, 130, 246, 0.5);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+}
+.category-Utilities { 
+    background: rgba(255, 206, 86, 0.2); color: #ffe58f; border-color: rgba(255, 206, 86, 0.5);
+    box-shadow: 0 0 15px rgba(255, 206, 86, 0.3);
+}
+.category-Health { 
+    background: rgba(75, 192, 192, 0.2); color: #a7f3d0; border-color: rgba(75, 192, 192, 0.5);
+    box-shadow: 0 0 15px rgba(75, 192, 192, 0.3);
+}
+.category-Education { 
+    background: rgba(153, 102, 255, 0.2); color: #d8b4fe; border-color: rgba(153, 102, 255, 0.5);
+    box-shadow: 0 0 15px rgba(153, 102, 255, 0.3);
+}
+.category-Other { 
+    background: rgba(201, 203, 207, 0.2); color: #e2e8f0; border-color: rgba(201, 203, 207, 0.5);
+    box-shadow: 0 0 15px rgba(201, 203, 207, 0.3);
+}
+
+.badge.bg-dark {
+    background: rgba(0, 0, 0, 0.4) !important;
+    color: #e2e8f0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(5px);
+    padding: 8px 12px;
+}
+
+/* --- 8. INPUTS & BUTTONS --- */
+input, select, .form-control, .form-select {
+    background: rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: #fff !important;
+    border-radius: 16px !important;
+    padding: 15px !important;
+    backdrop-filter: blur(10px);
+}
+input:focus, select:focus, .form-control:focus {
+    box-shadow: 0 0 0 3px rgba(168, 129, 252, 0.3) !important;
+    border-color: var(--primary) !important;
+}
+input::placeholder { color: #64748b !important; }
+
+.btn { border-radius: 14px; padding: 12px 25px; font-weight: 700; letter-spacing: 0.5px; }
+
+.btn-primary {
+    background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+    border: none;
+    box-shadow: 0 10px 25px -10px rgba(139, 92, 246, 0.6);
+}
+.btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 35px -10px rgba(139, 92, 246, 0.8); }
+
+.btn-outline-light:hover { background: rgba(255,255,255,0.15); }
+
+/* --- 9. MOBILE RESPONSIVE --- */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: 80px;
+        bottom: 0;
+        top: auto;
+        left: 0;
+        flex-direction: row;
+        padding: 0;
+        background: rgba(15, 15, 30, 0.8);
+        backdrop-filter: blur(30px);
+        box-shadow: 0 -5px 30px rgba(0,0,0,0.6);
+        border-top: 1px solid var(--border);
+    }
+    .sidebar-brand { display: none; }
+    .sidebar-menu {
+        flex-direction: row;
+        justify-content: space-evenly;
+        width: 100%;
+        margin: 0;
+        align-items: center;
+    }
+    .sidebar-menu a {
+        flex-direction: column;
+        font-size: 0.7rem;
+        gap: 5px;
+        color: #94a3b8;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    .sidebar-menu a i { font-size: 1.6rem; margin: 0 !important; }
+    .sidebar-menu a.active i { color: var(--primary); transform: translateY(-5px); }
+    
+    .main-content { margin-left: 0; padding: 20px; padding-bottom: 100px; }
+    
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .main-card { padding: 20px; }
+    .table td { padding: 15px 5px; }
+}
+
+/* --- PROFIL PAGE STYLES --- */
+
+/* Το κοντέινερ της εικόνας */
+.profile-upload-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto; /* Κεντράρισμα */
+}
+
+/* Η ίδια η εικόνα - ΠΑΝΤΑ ΣΤΡΟΓΓΥΛΗ */
+.profile-edit-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover; /* Κόβει αυτόματα ότι περισσεύει (Zoom effect) */
+    border: 4px solid var(--primary);
+    box-shadow: 0 0 20px rgba(168, 129, 252, 0.4);
+}
+
+/* Το κουμπάκι της κάμερας */
+.upload-btn {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: var(--primary);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+    border: 2px solid #fff;
+}
+
+.upload-btn:hover {
+    transform: scale(1.1);
+    background: #8b5cf6;
+}
+
+/* Στυλ για το μήνυμα επιτυχίας */
+.alert-success {
+    background: rgba(74, 222, 128, 0.15) !important;
+    color: #4ade80 !important; /* Φωτεινό πράσινο */
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
