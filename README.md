@@ -3,7 +3,7 @@
 Το **SubsManage** είναι μια ολοκληρωμένη **Full-Stack Web Εφαρμογή** για την οργάνωση, παρακολούθηση και διαχείριση συνδρομητικών υπηρεσιών (SaaS, Streaming, Utilities, Gym κ.λπ.).
 
 Σκοπός της εφαρμογής είναι να δώσει στον χρήστη τον πλήρη έλεγχο των οικονομικών του, προσφέροντας εργαλεία προϋπολογισμού (Budgeting), αναλυτικά στατιστικά και έξυπνες ειδοποιήσεις, μέσα από ένα μοντέρνο και φιλικό περιβάλλον χρήστη (UI).
-<img width="1710" height="980" alt="Screenshot_21" src="https://github.com/user-attachments/assets/8a9fabc0-eabd-4a3b-87e3-5d24bb740823" />
+<img width="1699" height="785" alt="Screenshot_23" src="https://github.com/user-attachments/assets/ba62566a-ce23-4224-a3ea-f88230a62f34" />
 <img width="1709" height="941" alt="Screenshot_20" src="https://github.com/user-attachments/assets/5fc6428b-ae19-4f1f-8a9b-d239d3332d87" />
 <img width="1082" height="885" alt="Screenshot_19" src="https://github.com/user-attachments/assets/86c6b93a-6e77-4659-bb3e-de384da965fc" />
 
