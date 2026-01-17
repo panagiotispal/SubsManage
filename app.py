@@ -197,25 +197,37 @@ def profile():
 @app.route('/')
 @app.route('/')
 def home():
-    # Αρχικοποίηση μεταβλητών (για την περίπτωση που δεν είναι συνδεδεμένος)
+    # Αρχικοποίηση μεταβλητών (για Guest)
     subscriptions = []
     total_monthly = 0.0
     total_yearly = 0.0
     total_spent = 0.0
-    count = 0
+    count = 0  # Αρχικά 0
     category_totals = {}
     username = "Επισκέπτης"
     profile_pic = "default.png"
     
-    # ΜΟΝΟ αν είναι συνδεδεμένος τραβάμε δεδομένα από τη βάση
+    # BUDGET VARS
+    budget_percent = 0
+    budget_status = "success"
+    user_budget = 0.0
+    display_percent = 0
+
+    # ΜΟΝΟ αν είναι συνδεδεμένος τραβάμε δεδομένα
     if 'user_id' in session:
         subscriptions = execute_query("SELECT * FROM subscriptions WHERE user_id = %s", (session['user_id'],), fetch_all=True) or []
-        user = execute_query("SELECT username, profile_pic FROM users WHERE id = %s", (session['user_id'],), fetch_one=True)
+        
+        # --- Η ΔΙΟΡΘΩΣΗ ΕΙΝΑΙ ΕΔΩ ---
+        count = len(subscriptions)  # Μετράμε πόσες συνδρομές βρήκαμε!
+        # ----------------------------
+
+        user = execute_query("SELECT username, profile_pic, monthly_budget FROM users WHERE id = %s", (session['user_id'],), fetch_one=True)
         if user:
             username = user['username']
             profile_pic = user.get('profile_pic', 'default.png')
+            user_budget = float(user['monthly_budget'] or 0)
 
-        # --- ΥΠΟΛΟΓΙΣΜΟΙ (ΙΔΙΟΙ ΜΕ ΠΡΙΝ) ---
+        # --- ΥΠΟΛΟΓΙΣΜΟΙ ---
         SERVICE_DOMAINS = {
             'netflix': 'netflix.com', 'spotify': 'spotify.com',
             'youtube': 'youtube.com', 'google': 'google.com', 'apple': 'apple.com',
@@ -284,11 +296,20 @@ def home():
                 total_monthly += price * 4.33
                 total_yearly += price * 52
 
-    # Επιστροφή template (είτε με δεδομένα είτε κενό)
+        # --- BUDGET LOGIC ---
+        if user_budget > 0:
+            budget_percent = (total_monthly / user_budget) * 100
+            if budget_percent > 100: budget_status = "danger"
+            elif budget_percent > 80: budget_status = "warning"
+            else: budget_status = "success"
+            display_percent = min(budget_percent, 100)
+
     return render_template('index.html', subscriptions=subscriptions, username=username,
                            profile_pic=profile_pic, total_monthly=round(total_monthly, 2),
                            total_yearly=round(total_yearly, 2), total_spent=round(total_spent, 2),
-                           count=count, category_totals=category_totals)
+                           count=count, category_totals=category_totals,
+                           user_budget=user_budget, budget_percent=round(budget_percent, 1),
+                           budget_status=budget_status, display_percent=display_percent)
 
 @app.route('/add', methods=['GET', 'POST'])
 def add_subscription():
