@@ -1,0 +1,2 @@
+# SubsManage
+Ultimate Subscription Tracker
